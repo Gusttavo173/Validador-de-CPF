@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador de CPF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Validador de CPF</h1>
+    <p>Digite o CPF no campo abaixo:</p>
+    <input type="text" id="cpf" placeholder="Digite o CPF">
+    <button onclick="validarCPF()">Validar</button>
+    <div id="resultado"></div>
+
+    <script>
+        function validarCPF() {
+            const cpf = document.getElementById('cpf').value.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+            // Verifica se o CPF tem 11 dígitos
+            if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
+                exibirResultado("CPF inválido!", false);
+                return;
+            }
+
+            // Função para calcular os dígitos verificadores
+            function calcularDigito(cpf, fatorInicial) {
+                let soma = 0;
+                for (let i = 0; i < fatorInicial - 1; i++) {
+                    soma += parseInt(cpf[i]) * (fatorInicial - i);
+                }
+                const resto = (soma * 10) % 11;
+                return resto === 10 ? 0 : resto;
+            }
+
+            const primeiroDigito = calcularDigito(cpf, 10);
+            const segundoDigito = calcularDigito(cpf, 11);
+
+            if (primeiroDigito === parseInt(cpf[9]) && segundoDigito === parseInt(cpf[10])) {
+                exibirResultado("CPF válido!", true);
+            } else {
+                exibirResultado("CPF inválido!", false);
+            }
+        }
+
+        function exibirResultado(mensagem, valido) {
+            const resultado = document.getElementById('resultado');
+            resultado.textContent = mensagem;
+            resultado.style.color = valido ? "green" : "red";
+        }
+    </script>
+</body>
+</html>
